@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        int permissionStatus = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+
         init();
         registration();
         login();
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!editTextLogin.getText().toString().equals("") & !editTextPassword.getText().toString().equals("") & checkBox.isChecked()) {
+                if (!editTextLogin.getText().toString().equals("") & !editTextPassword.getText().toString().equals("") & !checkBox.isChecked()) {
 
                     try {
                         FileOutputStream fileOutputStream = openFileOutput("LoginPassword", MODE_PRIVATE);
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if (!editTextLogin.getText().toString().equals("") & !editTextPassword.getText().toString().equals("") & !checkBox.isChecked()) {
+                } else if (!editTextLogin.getText().toString().equals("") & !editTextPassword.getText().toString().equals("") & checkBox.isChecked()) {
                     if (isExternalStorageWritable()) {
                         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                                 "LoginPassword");
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             bw.write(editTextLogin.getText().toString());
                             bw.write(editTextPassword.getText().toString());
                             bw.close();
+                            Toast.makeText(getApplicationContext(), "Вы зарегистрировались", Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -137,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
                                 REQUEST_CODE_PERMISSION_READ_STORAGE);
                     }
                 }
-
             }
         });
     }
