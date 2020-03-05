@@ -39,8 +39,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        int permissionStatus = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                REQUEST_CODE_PERMISSION_READ_STORAGE
+        );
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                REQUEST_CODE_PERMISSION_WRITE_STORAGE
+        );
+
 
         init();
         registration();
@@ -62,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!editTextLogin.getText().toString().equals("") & !editTextPassword.getText().toString().equals("") & !checkBox.isChecked()) {
+                if (!checkBox.isChecked()) {
 
                     try {
                         FileOutputStream fileOutputStream = openFileOutput("LoginPassword", MODE_PRIVATE);
@@ -77,8 +85,16 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if (!editTextLogin.getText().toString().equals("") & !editTextPassword.getText().toString().equals("") & checkBox.isChecked()) {
-                    if (isExternalStorageWritable()) {
+
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_CODE_PERMISSION_WRITE_STORAGE);
+                    int permissionStatus = ContextCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+
+
                         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                                 "LoginPassword");
                         try {
@@ -91,14 +107,12 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(getApplicationContext(), "File Error", Toast.LENGTH_SHORT).show();
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                REQUEST_CODE_PERMISSION_WRITE_STORAGE);
                     }
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "Ошибка", Toast.LENGTH_SHORT).show();
                 }
             }
-
         });
     }
 
@@ -145,20 +159,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_PERMISSION_READ_STORAGE:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    try {
-                        LoadFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-        }
-    }
+
+
 
     private void LoadFile() throws IOException {
 
@@ -192,10 +194,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isExternalStorageWritable() {
+    public boolean isExternalStorageWritable(){
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+        if(Environment.MEDIA_MOUNTED.equals(state)){
             return true;
         }
         return false;
