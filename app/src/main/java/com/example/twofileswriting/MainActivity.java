@@ -29,9 +29,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
-    EditText editTextLogin, editTextPassword;
-    Button btnLog, btnReg;
-    CheckBox checkBox;
+    private EditText edit_text_login, edit_text_password;
+    private Button btn_log, btnReg;
+    private CheckBox checkBox;
     public static final int REQUEST_CODE_PERMISSION_READ_STORAGE = 10;
     public static final int REQUEST_CODE_PERMISSION_WRITE_STORAGE = 11;
 
@@ -48,24 +48,19 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                 REQUEST_CODE_PERMISSION_WRITE_STORAGE
         );
-
-
         init();
         registration();
         login();
 
-
-
     }
 
     private void init() {
-        btnLog = findViewById(R.id.btnLog);
-        btnReg = findViewById(R.id.btnPass);
-        editTextLogin = findViewById(R.id.editTextLogin);
-        editTextPassword = findViewById(R.id.editTextPassword);
+        btn_log = findViewById(R.id.btn_log);
+        btnReg = findViewById(R.id.btn_pass);
+        edit_text_login = findViewById(R.id.edit_text_login);
+        edit_text_password = findViewById(R.id.edit_text_password);
         checkBox = findViewById(R.id.checkbox);
     }
-
     private void registration() {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
                 if (!checkBox.isChecked()) {
 
                     try {
-                        FileOutputStream fileOutputStream = openFileOutput("LoginPassword", MODE_PRIVATE);
+                        FileOutputStream fileOutputStream = openFileOutput("loginPassword", MODE_PRIVATE);
                         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
                         BufferedWriter bw = new BufferedWriter(outputStreamWriter);
-                        bw.write(editTextLogin.getText().toString());
-                        bw.write(editTextPassword.getText().toString());
+                        bw.write(edit_text_login.getText().toString());
+                        bw.write(edit_text_password.getText().toString());
                         bw.close();
                         Toast.makeText(getApplicationContext(), "Вы зарегистрировались", Toast.LENGTH_SHORT).show();
                     } catch (FileNotFoundException e) {
@@ -96,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
 
 
                         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                                "LoginPassword");
+                                "loginPassword");
                         try {
                             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-                            bw.write(editTextLogin.getText().toString());
-                            bw.write(editTextPassword.getText().toString());
+                            bw.write(edit_text_login.getText().toString());
+                            bw.write(edit_text_password.getText().toString());
                             bw.close();
                             Toast.makeText(getApplicationContext(), "Вы зарегистрировались", Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
@@ -117,19 +112,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login() {
-        btnLog.setOnClickListener(new View.OnClickListener() {
+        btn_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkBox.isChecked()) {
                     try {
-                        FileInputStream fileInputStream = openFileInput("LoginPassword");
+                        FileInputStream fileInputStream = openFileInput("loginPassword");
                         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
                         BufferedReader login = new BufferedReader(inputStreamReader);
                         String log = login.readLine();
                         String pass = login.readLine();
                         login.close();
-                        if (log.equals(editTextLogin.getText().toString()) & pass.equals(editTextPassword.getText().toString())) {
-                            Toast.makeText(getApplicationContext(), "Добро пожаловать " + editTextLogin.getText().toString(), Toast.LENGTH_SHORT).show();
+                        if (log.equals(edit_text_login.getText().toString()) & pass.equals(edit_text_password.getText().toString())) {
+                            Toast.makeText(getApplicationContext(), "Добро пожаловать " + edit_text_login.getText().toString(), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "Вы ввели неверные данные", Toast.LENGTH_SHORT).show();
                         }
@@ -177,14 +172,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    "LoginPassword");
+                    "loginPassword");
 
             BufferedReader login = new BufferedReader(new FileReader(file));
             String log = login.readLine();
             String pass = login.readLine();
             login.close();
-            if (log.equals(editTextLogin.getText().toString()) & pass.equals(editTextPassword.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Добро пожаловать " + editTextLogin.getText().toString(), Toast.LENGTH_SHORT).show();
+            if (log.equals(edit_text_login.getText().toString()) & pass.equals(edit_text_password.getText().toString())) {
+                Toast.makeText(getApplicationContext(), "Добро пожаловать " + edit_text_login.getText().toString(), Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Вы ввели неверные данные", Toast.LENGTH_SHORT).show();
             }
